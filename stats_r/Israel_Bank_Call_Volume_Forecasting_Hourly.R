@@ -12,18 +12,14 @@ library(wavethresh)
 setClass('yyyy-mm-dd hh:mm:ss')
 setAs("character","yyyy-mm-dd hh:mm:ss", function(from) as.POSIXct(from, format="%Y-%m-%d %H:%M:%S"))
 
-Israel_DataD <- read.table("/Users/bzheng/Documents/workspace/ContactCenterNext/Israel_Bank_Data/agg_D.csv", 
-                        header = FALSE, sep=",",colClasses = c("Date", "numeric"));
 Israel_DataH <- read.table("/Users/bzheng/Documents/workspace/ContactCenterNext/Israel_Bank_Data/agg_H.csv", 
                            header = FALSE, sep=",",colClasses = c("yyyy-mm-dd hh:mm:ss", "numeric"));
 
-colnames(Israel_DataD) <- c("Time","CallVolume");
 colnames(Israel_DataH) <- c("Time","CallVolume");
 
-Israel_DataD_Full_xts <- xts(Israel_DataD[,2], as.Date(0:(length(Israel_DataD[,2])-1), origin="1999-01-01"),frequency=7)
 Israel_DataH_Full_xts <- xts(Israel_DataH[,2], seq(ISOdatetime(1999,1,1,0,0,0,"EST"), 
-                         by = "hour", length.out = length(Israel_DataH[,2])),
-                         frequency=7)
+                                                   by = "hour", length.out = length(Israel_DataH[,2])),
+                             frequency=7)
 
 
 # Data
@@ -35,28 +31,15 @@ Israel_DataH_Full_xts <- xts(Israel_DataH[,2], seq(ISOdatetime(1999,1,1,0,0,0,"E
 ## Testing Data 1999 06-01 [152] - 1999 06-07 [158]
 ## Training Data 1999 01-01 [1] - 1999 01-31 [32]
 ## Testing Data 1999 02-01 [33] - 1999 02-28 [158]
-Forecast_D <- 14
+
 Forecast_H <- 24*7
-Start_Train_D <- 1
-End_Train_D <- 151
-Start_Test_D <- 152
-End_Test_D <- Start_Test_D+Forecast_D-1
 Start_Train_H <- 1
-End_Train_H <- End_Train_D*24
+End_Train_H <- 120*24
 Start_Test_H <- End_Train_H+1
 End_Test_H <- Start_Test_H+Forecast_H-1
 
-Israel_DataD_TrainData <-Israel_DataD[Start_Train_D:End_Train_D,]
-Israel_DataD_TestData <- Israel_DataD[Start_Test_D:End_Test_D,]
 Israel_DataH_TrainData <-Israel_DataH[Start_Train_H:End_Train_H,]
 Israel_DataH_TestData <- Israel_DataH[Start_Test_H:End_Test_H,]
-
-Israel_DataD_TS <- xts(Israel_DataD[Start_Train_D:End_Test_D, 2], 
-                      as.Date(0:(End_Test_D-1), origin="1999-01-01"),frequency=7)
-Israel_DataD_TrainData_TS <- xts(Israel_DataD[Start_Train_D:End_Train_D, 2], 
-                      as.Date(0:(End_Train_D-1),origin="1999-01-01"),frequency=7)
-Israel_DataD_TestData_TS <- xts(Israel_DataD[Start_Test_D:End_Test_D, 2],
-                      as.Date(0:(Forecast_D-1),origin="1999-05-01"),frequency=7)
 
 Israel_DataH_TS <- xts(Israel_DataH[Start_Train_H:End_Test_H, 2], 
                        seq(ISOdatetime(1999,1,1,0,0,0,"EST"), 
@@ -72,59 +55,32 @@ Israel_DataH_TestData_TS <- xts(Israel_DataH[Start_Test_H:End_Test_H,2],
                                 frequency=24)
 
 # Data Visualization
-plot(Israel_DataD$CallVolume, type="l", 
-     ylim=range(Israel_DataD$CallVolume), xlab="Day",
-     ylab="Call Volume")
-
 plot(Israel_DataH$CallVolume, type="l", 
      ylim=range(Israel_DataH$CallVolume), xlab="Hour",
      ylab="Call Volume")
-
-plot.xts(Israel_DataD_Full_xts, ylab="Call Volume", main = "Israel Bank Daily Call Volumes")
 plot.xts(Israel_DataH_Full_xts, ylab="Call Volume", main = "Israel Bank Hourly Call Volumes")
 
 
 # Forecasting
-plot.xts(Israel_DataD_TS, ylab="Call Volume", main = "Israel Bank Daily Call Volumes")
 plot.xts(Israel_DataH_TS, ylab="Call Volume", main = "Israel Bank Hourly Call Volumes")
 
 ## Multiple Linear Regression
-Israel_DataD_fit<-lm(CallVolume ~ Time, data=Israel_DataD_TrainData)
-summary(Israel_DataD_fit)
-
 Israel_DataH_fit<-lm(CallVolume ~ Time, data=Israel_DataH_TrainData)
 summary(Israel_DataH_fit)
 
 ## ARIMA
-Israel_DataD_fModel_ARIMA<- Arima(Israel_DataD_TrainData_TS, order=c(2,2,1),seasonal=list(order=c(2,0,0),period=7))
-#Israel_DataD_fModel_ARIMA <-  auto.arima(Israel_DataD_TrainData_TS)
-Israel_DataD_forecast_ARIMA <- forecast(Israel_DataD_fModel_ARIMA, h=Forecast_D)
-accuracy(Israel_DataD_forecast_ARIMA, Israel_DataD_TestData_TS)
-acf(Israel_DataD_TrainData_TS)
-pacf(Israel_DataD_TrainData_TS)
-plot.ts(Israel_DataD_forecast_ARIMA$mean)
-plot.ts(Israel_DataD_TestData_TS)
-Israel_DataD_fModel_ARIMA_performance <- cbind(xts(Israel_DataD_forecast_ARIMA$mean, 
-                                as.Date(0:(Forecast_D-1),origin="1999-05-01"),
-                                frequency = 7), Israel_DataD_TestData_TS)
-colnames(Israel_DataD_fModel_ARIMA_performance)<-c('Forecasting', 'Acutal')
-plot(x = as.zoo(Israel_DataD_fModel_ARIMA_performance), ylab = "Call Volumes", xlab="Time",
-     main = "Prediction and Forecasting Comparisons",
-     col = c("#A6A8AB","#199DD9"), screen=1)
-legend(x = "bottomright", legend = c("Forecasting","Actual"), 
-       lty = 1, lwd = 3, col = c("#A6A8AB","#199DD9"))
-
 #Israel_DataH_fModel_ARIMA <-auto.arima(ts(Israel_DataH_TrainData_TS,frequency=24))
+#Israel_DataH_fModel_ARIMA<- Arima(ts(Israel_DataH_TrainData_TS,frequency=24), order=c(4,1,3), seasonal=list(order=c(0,1,2),period=24))
 Israel_DataH_fModel_ARIMA<- Arima(ts(Israel_DataH_TrainData_TS,frequency=24), 
-                           order=c(2,0,1),seasonal=list(order=c(2,0,0),period=24))
+                                  order=c(3,1,3), seasonal=list(order=c(0,1,2),period=24))
 Israel_DataH_forecast_ARIMA <- forecast(Israel_DataH_fModel_ARIMA, h=Forecast_H)
 accuracy(Israel_DataH_forecast_ARIMA, Israel_DataH_TestData_TS)
 acf(Israel_DataH_TrainData_TS)
 pacf(Israel_DataH_TrainData_TS)
 forecast_actual_TS <- cbind(xts(Israel_DataH_forecast_ARIMA$mean, 
-                          seq(ISOdatetime(1999,6,1,0,0,0,"EST"), 
-                          by = "hour", length.out=Forecast_H),
-                          frequency = 24), Israel_DataH_TestData_TS)
+                                seq(ISOdatetime(1999,6,1,0,0,0,"EST"), 
+                                    by = "hour", length.out=Forecast_H),
+                                frequency = 24), Israel_DataH_TestData_TS)
 colnames(forecast_actual_TS)<-c('Forecasting', 'Acutal')
 plot(x = as.zoo(forecast_actual_TS), ylab = "Call Volumes", xlab="Time",
      main = "Prediction and Forecasting Comparisons",
@@ -133,8 +89,8 @@ legend(x = "topright", legend = c("Forecasting","Actual"),
        lty = 1, lwd = 3, col = c("#A6A8AB","#199DD9"))
 
 plot.xts(xts(Israel_DataH_forecast_ARIMA$mean, seq(ISOdatetime(1999,6,1,0,0,0,"EST"), 
-        by = "hour", length.out=Forecast_H),
-        frequency = 24))
+                                                   by = "hour", length.out=Forecast_H),
+             frequency = 24))
 plot.xts(Israel_DataH_TestData_TS)
 
 
