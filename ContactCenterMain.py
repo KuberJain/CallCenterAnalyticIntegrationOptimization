@@ -24,9 +24,17 @@ def main():
     print outcome_stats
     print recordStartDate
     print recordEndDate
-    #visualization.barplot(date_stats.keys(), date_stats.values(), 'Israel Bank Contact Center Daily Volume in 1999', 'Date', 'Number of Calls', 0.2)
-    #visualization.barplot(vruline_stats.keys(), vruline_stats.values(), 'Israel Bank Contact Center Cumulative VRU Line Call Volume in 1999', 'Date', 'Number of Calls', 0.2)
-    #visualization.barplot(type_stats.keys(), type_stats.values(), 'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Date', 'Number of Calls', 0.2)
+#    visualization.barplot(date_stats.keys(), date_stats.values(),
+#                          'Israel Bank Contact Center Daily Volume in 1999', 'Date', 'Number of Calls', 0.2)
+    visualization.barplot(vruline_stats.keys(), vruline_stats.values(),
+                          'Israel Bank Contact Center Cumulative VRU Line Call Volume in 1999', 'VRU Line',
+                          'Number of Calls', 0.2)
+    visualization.barplot(type_stats.keys(), type_stats.values(),
+                          'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Type',
+                          'Number of Calls', 0.2)
+    visualization.barplot(outcome_stats.keys(), outcome_stats.values(),
+                          'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Status',
+                          'Number of Calls', 0.2)
 
     callRecord = []
 
