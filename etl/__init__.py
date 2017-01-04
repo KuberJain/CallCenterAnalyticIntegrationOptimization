@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from datetime import timedelta
 
+
 def concatMonthlyData(dir):
     callRecord = []
     rawDataColumnNames = []
@@ -19,8 +20,9 @@ def concatMonthlyData(dir):
         writeTXT.write('\t'.join(rawDataColumnNames) +'\n')
         for row in callRecord:
             writeTXT.write('\t'.join(row)+'\n')
-        writeTXT.close()
+    writeTXT.close()
     return callRecord, rawDataColumnNames
+
 
 def dataETL(dir):
     callRecord = []
@@ -35,12 +37,22 @@ def dataETL(dir):
         readTXT.close()
     return callRecord, callRecordColNames
 
-def dataClean(rawRecord):
+
+def dataClean(dir,rawRecord,rawRecordColNames):
     rmPhantomCallRecord = []
     for row in rawRecord:
         if row[12] != 'PHANTOM':
             rmPhantomCallRecord.append(row)
+
+    with open(dir+'/Israel_Bank_Data/1999_rmPHANTOM.txt', 'w') as writeTXT:
+        # print rawDataColumnNames
+        writeTXT.write('\t'.join(rawRecordColNames) + '\n')
+        for row in rmPhantomCallRecord:
+            writeTXT.write('\t'.join(row) + '\n')
+    writeTXT.close()
+
     return rmPhantomCallRecord
+
 
 def callVolumeStat(callRecord):
     date_stats = {}
@@ -69,12 +81,13 @@ def callVolumeStat(callRecord):
         else:
             outcome_stats[record[12]]+=1
     
-    sortDate = pd.to_datetime(date_stats.keys(), format='%y%m%d').order()
+    sortDate = pd.to_datetime(date_stats.keys(), format='%y%m%d').sort_values(ascending=True)
     
     recordStartDate = sortDate[0].strftime(format='%y%m%d')
     recordEndDate = sortDate[len(sortDate)-1].strftime(format='%y%m%d')
 
     return date_stats, vruline_stats, type_stats, outcome_stats, recordStartDate, recordEndDate
+
 
 def callVolumeAGG(callRecord, callRecordColName, aggInterval, recordStartDate, recordEndDate, outputFile, dir):
     callRecordDF = pd.DataFrame(callRecord, columns=callRecordColName)
@@ -84,12 +97,14 @@ def callVolumeAGG(callRecord, callRecordColName, aggInterval, recordStartDate, r
     callRecordArrTimeFullRangeSeries = dict()
     
     if aggInterval == 'D':
-        callRecordArrTimeAGGSeries = callRecordArrTimeSeries.resample(rule='D', how='sum', fill_method='pad')
+        callRecordArrTimeAGGSeries = callRecordArrTimeSeries.resample(rule='D').sum()
     elif aggInterval == 'H':
-        callRecordArrTimeAGGSeries = callRecordArrTimeSeries.resample(rule='H', how='sum', fill_method='pad')
+        callRecordArrTimeAGGSeries = callRecordArrTimeSeries.resample(rule='H').sum()
     else:
         print 'Aggregation Interval '+ aggInterval + '\t is not supported'
-    
+
+    callRecordArrTimeAGGSeries = callRecordArrTimeAGGSeries.fillna(value=0)
+
     for time in callRecordArrTimeFullRange:
         if time in callRecordArrTimeAGGSeries.keys():
             callRecordArrTimeFullRangeSeries[time] = callRecordArrTimeAGGSeries.get_value(time)

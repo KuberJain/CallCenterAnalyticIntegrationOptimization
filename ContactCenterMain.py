@@ -8,6 +8,7 @@ This script is to open a main extrance to a contact center simulation based deci
 
 import os
 import etl
+import pandas as pd
 import visualization
 
 def main():
@@ -26,10 +27,31 @@ def main():
     #visualization.barplot(date_stats.keys(), date_stats.values(), 'Israel Bank Contact Center Daily Volume in 1999', 'Date', 'Number of Calls', 0.2)
     #visualization.barplot(vruline_stats.keys(), vruline_stats.values(), 'Israel Bank Contact Center Cumulative VRU Line Call Volume in 1999', 'Date', 'Number of Calls', 0.2)
     #visualization.barplot(type_stats.keys(), type_stats.values(), 'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Date', 'Number of Calls', 0.2)
-    
-    callRecord = etl.dataClean(rawCallRecord)
-    etl.callVolumeAGG(callRecord,rawCallRecordColName, 'D', recordStartDate, recordEndDate, True, dir)
-    etl.callVolumeAGG(callRecord,rawCallRecordColName, 'H', recordStartDate, recordEndDate, True, dir)
+
+    callRecord = []
+
+    if not os.path.isfile(dir+'/Israel_Bank_Data/1999_rmPHANTOM.txt'):
+        callRecord = etl.dataClean(dir, rawCallRecord, rawCallRecordColName)
+    else:
+        with open(dir+'/Israel_Bank_Data/1999_rmPHANTOM.txt', 'r') as readTXT:
+            callRecordName = readTXT.readline().strip().split('\t')
+            for row in readTXT:
+                callRecord.append(row.strip().split('\t'))
+        readTXT.close()
+
+    if not os.path.isfile(dir+'/Israel_Bank_Data/agg_D.csv'):
+        callVolumeD = etl.callVolumeAGG(callRecord, rawCallRecordColName, 'D', recordStartDate, recordEndDate, True,
+                                        dir)
+    else:
+        callVolumeD = pd.read_csv(dir+'/Israel_Bank_Data/agg_D.csv')
+
+    if not os.path.isfile(dir+'/Israel_Bank_Data/agg_H.csv'):
+        callVolumeH = etl.callVolumeAGG(callRecord, rawCallRecordColName, 'H', recordStartDate, recordEndDate, True,
+                                        dir)
+    else:
+        callVolumeH = pd.read_csv(dir+'/Israel_Bank_Data/agg_H.csv')
+
+
     return None
 
 if __name__ == '__main__':
