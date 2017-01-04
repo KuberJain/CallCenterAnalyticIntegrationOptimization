@@ -18,12 +18,12 @@ def main():
     rawCallRecord, rawCallRecordColName = etl.dataETL(dir)
     date_stats, vruline_stats, type_stats, outcome_stats, recordStartDate, recordEndDate = etl.callVolumeStat(rawCallRecord)
     
-    #print date_stats
-    #print vruline_stats
-    #print type_stats
-    #print outcome_stats
-    #print recordStartDate
-    #print recordEndDate
+    print date_stats
+    print vruline_stats
+    print type_stats
+    print outcome_stats
+    print recordStartDate
+    print recordEndDate
     #visualization.barplot(date_stats.keys(), date_stats.values(), 'Israel Bank Contact Center Daily Volume in 1999', 'Date', 'Number of Calls', 0.2)
     #visualization.barplot(vruline_stats.keys(), vruline_stats.values(), 'Israel Bank Contact Center Cumulative VRU Line Call Volume in 1999', 'Date', 'Number of Calls', 0.2)
     #visualization.barplot(type_stats.keys(), type_stats.values(), 'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Date', 'Number of Calls', 0.2)
