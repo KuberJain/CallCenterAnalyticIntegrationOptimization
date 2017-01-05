@@ -21,6 +21,7 @@ def concatMonthlyData(dir):
         for row in callRecord:
             writeTXT.write('\t'.join(row)+'\n')
     writeTXT.close()
+
     return callRecord, rawDataColumnNames
 
 
