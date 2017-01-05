@@ -33,7 +33,7 @@ def main():
                           'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Type',
                           'Number of Calls', 0.2)
     visualization.barplot(dir, outcome_stats.keys(), outcome_stats.values(),
-                          'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Status',
+                          'Israel Bank Contact Center Cumulative Call Volume Over Status in 1999', 'Status',
                           'Number of Calls', 0.2)
 
     callRecord = []

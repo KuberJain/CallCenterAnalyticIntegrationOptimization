@@ -61,25 +61,25 @@ def callVolumeStat(callRecord):
     outcome_stats ={}
     
     for record in callRecord:
-        if record[0] not in vruline_stats:
-            vruline_stats[record[0]]=1
+        if record[0].strip() not in vruline_stats:
+            vruline_stats[record[0].strip()]=1
         else:
-            vruline_stats[record[0]]+=1
+            vruline_stats[record[0].strip()]+=1
             
-        if record[4] not in type_stats:
-            type_stats[record[4]]=1
+        if record[4].strip() not in type_stats:
+            type_stats[record[4].strip()]=1
         else:
-            type_stats[record[4]]+=1
+            type_stats[record[4].strip()]+=1
             
-        if record[5] not in date_stats:
-            date_stats[record[5]]=1
+        if record[5].strip() not in date_stats:
+            date_stats[record[5].strip()]=1
         else:
-            date_stats[record[5]]+=1
+            date_stats[record[5].strip()]+=1
         
-        if record[12] not in outcome_stats:
-            outcome_stats[record[12]]=1
+        if record[12].strip() not in outcome_stats:
+            outcome_stats[record[12].strip()]=1
         else:
-            outcome_stats[record[12]]+=1
+            outcome_stats[record[12].strip()]+=1
     
     sortDate = pd.to_datetime(date_stats.keys(), format='%y%m%d').sort_values(ascending=True)
     
