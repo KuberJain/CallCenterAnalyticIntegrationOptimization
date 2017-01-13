@@ -10,31 +10,33 @@ import os
 import etl
 import pandas as pd
 import visualization
+from etl import callStats
+from etl import agentStats
 
 def main():
     dir = os.path.dirname(__file__)
     print dir
     
     rawCallRecord, rawCallRecordColName = etl.dataETL(dir)
-    date_stats, vruline_stats, type_stats, outcome_stats, recordStartDate, recordEndDate = etl.callVolumeStat(rawCallRecord)
+    date_stats, vruline_stats, type_stats, outcome_stats, recordStartDate, recordEndDate = etl.callStats.volume(rawCallRecord)
     
-    print date_stats
-    print vruline_stats
-    print type_stats
-    print outcome_stats
+#    print date_stats
+#    print vruline_stats
+#    print type_stats
+#    print outcome_stats
     print recordStartDate
     print recordEndDate
 #    visualization.barplot(dir, date_stats.keys(), date_stats.values(),
 #                          'Israel Bank Contact Center Daily Volume in 1999', 'Date', 'Number of Calls', 0.2)
-    visualization.barplot(dir, vruline_stats.keys(), vruline_stats.values(),
-                          'Israel Bank Contact Center Cumulative VRU Line Call Volume in 1999', 'VRU Line',
-                          'Number of Calls', 0.2)
-    visualization.barplot(dir, type_stats.keys(), type_stats.values(),
-                          'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Type',
-                          'Number of Calls', 0.2)
-    visualization.barplot(dir, outcome_stats.keys(), outcome_stats.values(),
-                          'Israel Bank Contact Center Cumulative Call Volume Over Status in 1999', 'Status',
-                          'Number of Calls', 0.2)
+#    visualization.barplot(dir, vruline_stats.keys(), vruline_stats.values(),
+#                          'Israel Bank Contact Center Cumulative VRU Line Call Volume in 1999', 'VRU Line',
+#                          'Number of Calls', 0.2)
+#    visualization.barplot(dir, type_stats.keys(), type_stats.values(),
+#                          'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Type',
+#                          'Number of Calls', 0.2)
+#    visualization.barplot(dir, outcome_stats.keys(), outcome_stats.values(),
+#                          'Israel Bank Contact Center Cumulative Call Volume Over Status in 1999', 'Status',
+#                          'Number of Calls', 0.2)
 
     callRecord = []
 
@@ -59,6 +61,7 @@ def main():
     else:
         callVolumeH = pd.read_csv(dir+'/Israel_Bank_Data/agg_H.csv')
 
+    agentStats.agentServVol(callRecord)
 
     return None
 
