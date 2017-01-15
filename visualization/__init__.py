@@ -17,8 +17,8 @@ def lineplot(dir, x, y, title, xlabel, ylabel, line_width):
 
     return None
 
-def histplot(dir, x, title, xlabel, ylabel, Nbin=10):
-    plt.hist(x, Nbin, facecolor='#199DD9',  alpha=0.75)
+def histplot(dir, x, bins, title, xlabel, ylabel):
+    plt.hist(x, bins, facecolor='#199DD9',  alpha=0.75, align='left')
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
     plt.title(title)
