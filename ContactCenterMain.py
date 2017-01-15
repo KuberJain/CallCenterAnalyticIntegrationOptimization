@@ -10,6 +10,8 @@ import os
 import etl
 import pandas as pd
 import visualization
+from matplotlib import pyplot as plt
+
 from etl import callStats
 from etl import agentStats
 
@@ -61,7 +63,8 @@ def main():
     else:
         callVolumeH = pd.read_csv(dir+'/Israel_Bank_Data/agg_H.csv')
 
-    agentStats.agentServVol(callRecord)
+    agentSkill = agentStats.skill(callRecord)
+    visualization.histplot(dir, agentSkill, 'Israel Bank Contact Center Histogram of Number of Skills', 'Number of Skills', 'Number of Agents', 10)
 
     return None
 

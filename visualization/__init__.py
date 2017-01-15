@@ -17,6 +17,18 @@ def lineplot(dir, x, y, title, xlabel, ylabel, line_width):
 
     return None
 
+def histplot(dir, x, title, xlabel, ylabel, Nbin=10):
+    plt.hist(x, Nbin, facecolor='#199DD9',  alpha=0.75)
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(dir+'/Outputs/visuals/'+title+'.png')
+    plt.show()
+
+    return None
+
 def barplot(dir, x,y, title, xlabel, ylabel, bar_width):
     index = np.arange(len(x))
     plt.bar(index, y, width=bar_width, color='#199DD9')
