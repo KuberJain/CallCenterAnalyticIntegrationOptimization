@@ -20,6 +20,12 @@ def main():
     
     rawCallRecord, rawCallRecordColName = etl.dataETL(dir)
 
+    date_stats, vruline_stats, type_stats, outcome_stats, recordStartDate, recordEndDate = etl.callStats.volume_content(
+        rawCallRecord)
+    visualization.barplot(dir, outcome_stats.keys(), outcome_stats.values(),
+                          'Israel Bank Contact Center Cumulative Call Volume Over Status in 1999', 'Status',
+                          'Number of Calls', 0.2)
+
     callRecord = []
 
     if not os.path.isfile(dir+'/Israel_Bank_Data/1999_rmPHANTOM.txt'):
@@ -31,27 +37,22 @@ def main():
                 callRecord.append(row.strip().split('\t'))
         readTXT.close()
 
-    date_stats, vruline_stats, type_stats, outcome_stats, recordStartDate, recordEndDate = etl.callStats.volume(
+    date_stats, vruline_stats, type_stats, outcome_stats, recordStartDate, recordEndDate = etl.callStats.volume_content(
         callRecord)
+    month_stats = etl.callStats.volume_month(callRecord)
 
-    print date_stats
-    print vruline_stats
-    print type_stats
-    print outcome_stats
     print recordStartDate
     print recordEndDate
 
-    visualization.barplot(dir, date_stats.keys(), date_stats.values(),
-                          'Israel Bank Contact Center Daily Volume in 1999', 'Date', 'Number of Calls', 0.2)
+    visualization.barplot(dir, month_stats.keys(), month_stats.values(),
+                          'Israel Bank Contact Center Monthly Volume in 1999', 'Date', 'Number of Calls', 0.2)
     visualization.barplot(dir, vruline_stats.keys(), vruline_stats.values(),
                           'Israel Bank Contact Center Cumulative VRU Line Call Volume in 1999', 'VRU Line',
                           'Number of Calls', 0.2)
     visualization.barplot(dir, type_stats.keys(), type_stats.values(),
                           'Israel Bank Contact Center Cumulative Call Volume Over Types in 1999', 'Type',
                           'Number of Calls', 0.2)
-    visualization.barplot(dir, outcome_stats.keys(), outcome_stats.values(),
-                          'Israel Bank Contact Center Cumulative Call Volume Over Status in 1999', 'Status',
-                          'Number of Calls', 0.2)
+
 
     if not os.path.isfile(dir+'/Israel_Bank_Data/agg_D.csv'):
         callVolumeD = etl.callVolumeAGG(callRecord, rawCallRecordColName, 'D', recordStartDate, recordEndDate, True,
