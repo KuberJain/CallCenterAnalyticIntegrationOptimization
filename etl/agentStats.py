@@ -10,6 +10,7 @@ def servVol(callRecord):
     agentSkillVolume = callRecordDF[['server', 'type', 'call_id']].groupby(by=['server', 'type'], as_index=False).count()
 
     print agentSkillVolume.head(5)
+    print 'Agent Number '+str(len(agentSkillVolume['server'].unique()))
 
     return agentSkillVolume
 

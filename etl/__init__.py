@@ -42,8 +42,10 @@ def dataETL(dir):
 def dataClean(dir,rawRecord,rawRecordColNames):
     rmPhantomCallRecord = []
     for row in rawRecord:
-        if row[12] != 'PHANTOM':
+        if row[12] != 'PHANTOM' and row[4] != 'AA':
             rmPhantomCallRecord.append(row)
+        if row[4] =='AA':
+            print row
 
     with open(dir+'/Israel_Bank_Data/1999_rmPHANTOM.txt', 'w') as writeTXT:
         # print rawDataColumnNames
