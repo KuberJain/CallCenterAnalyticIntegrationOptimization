@@ -44,7 +44,9 @@ def main():
     print recordStartDate
     print recordEndDate
 
-    visualization.barplot(dir, month_stats.keys(), month_stats.values(),
+    calendarMonth = ['January', 'February','March', 'April', 'May', 'June', 'July', 'August', 'September',
+                                'November', 'December']
+    visualization.barplot(dir, calendarMonth, [month_stats[i] for i in calendarMonth],
                           'Israel Bank Contact Center Monthly Volume in 1999', 'Date', 'Number of Calls', 0.2)
     visualization.barplot(dir, vruline_stats.keys(), vruline_stats.values(),
                           'Israel Bank Contact Center Cumulative VRU Line Call Volume in 1999', 'VRU Line',
